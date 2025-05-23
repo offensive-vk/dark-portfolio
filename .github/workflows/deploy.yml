@@ -1,0 +1,92 @@
+name: CI / Dockerhub
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOCKER: docker.io
+  GITHUB: ghcr.io
+  DOCKERHUB: ${{ secrets.DOCKER_USER }}/${{ secrets.DOCKER_IMAGE }}
+  USERNAME: ${{ secrets.DOCKER_USER }}
+  PASSWORD: ${{ secrets.DOCKER_TOKEN }}
+  DOCKERFILE: './Dockerfile'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Publish Images
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # v3.0.0
+
+      - name: Extract Docker Metadata
+        id: meta
+        uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
+        with:
+          images: |
+            ${{ env.DOCKERHUB }}
+          tags: |
+            type=ref,event=pr
+            type=edge
+            ${{ github.ref_name }}
+          flavor: |
+            latest=true
+          labels: |
+            org.opencontainers.image.title=dark-portfolio
+            org.opencontainers.image.vendor=vedansh
+
+      - name: Install Cosign
+        if: github.event_name != 'pull_request'
+        uses: sigstore/cosign-installer@4959ce089c160fddf62f7b42464195ba1a56d382 #v3.6.0
+        with:
+          cosign-release: 'v2.1.1'
+      
+      - name: Login to Dockerhub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@3b8fed7e4b60203b2aa0ecc6c6d6d91d12c06760 # v3.0.0
+        with:
+          registry: ${{ env.DOCKER }}
+          username: ${{ env.USERNAME }}
+          password: ${{ env.PASSWORD }}
+
+      - name: Build and Push Image
+        id: build-and-push
+        uses: docker/build-push-action@e44afff3590e1d4f93b6adc72376512edb012a7c # v5.0.0
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/amd64/v2
+
+      - name: Check Manifests
+        if: github.event_name != 'pull_request'
+        run: |
+          docker buildx imagetools inspect ${{ env.DOCKERHUB }}:${{ steps.meta.outputs.version }}
+    
+      - name: Inspect Image
+        if: github.event_name != 'pull_request'
+        run: |
+          docker pull ${{ env.DOCKERHUB }}:${{ steps.meta.outputs.version }}
+          docker image inspect ${{ env.DOCKERHUB }}:${{ steps.meta.outputs.version }}
+
+      - name: Verify Tags and Labels
+        run: |
+          echo "## Action Summary - Docker CI " >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.meta.outputs.tags }} " >> $GITHUB_STEP_SUMMARY
