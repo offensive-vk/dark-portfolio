@@ -21,16 +21,14 @@ Make sure you have **Node.js (v24 or later)** and **pnpm** installed on your mac
 
 ### Installation
 
-1.  **Clone the repository:**
+**Clone the repository:**
 
     ```bash
     git clone https://github.com/offensive-vk/dark-portfolio.git
     cd dark-portfolio
     ```
 
-    *(Replace `https://github.com/offensive-vk/dark-portfolio.git` with your actual repository URL)*
-
-2.  **Install dependencies:**
+**Install dependencies:**
 
     ```bash
     pnpm i
@@ -51,7 +49,7 @@ The site will be available at `http://localhost:7777`.
 To create a production-ready build of your portfolio:
 
 ```bash
-pnpm run build
+$ pnpm run build
 ```
 
 This command will generate the static assets in the `dist/` directory.
@@ -61,7 +59,7 @@ This command will generate the static assets in the `dist/` directory.
 You can preview the built site locally using:
 
 ```bash
-pnpm run preview
+$ pnpm run preview
 ```
 
 This will also serve the site on `http://localhost:7777`.
@@ -73,13 +71,13 @@ This project includes a `Dockerfile` for easy containerization.
 ### Build the Docker Image
 
 ```bash
-docker build -t dark-portfolio-pnpm .
+docker build -t dark-portfolio .
 ```
 
 ### Run the Docker Container
 
 ```bash
-docker run -p 7777:7777 dark-portfolio-pnpm
+docker run -p 7777:7777 dark-portfolio
 ```
 
 Your portfolio will then be accessible via `http://localhost:7777` in your browser.
@@ -91,4 +89,4 @@ Contributions are welcome\! Feel free to open issues or submit pull requests.
 
 ## License
 
-This project is open source and available under the [MIT License](https://www.google.com/search?q=LICENSE). *(If you have a different license, update this accordingly)*
+This project is open source and available under the [MIT License](./LICENSE)
