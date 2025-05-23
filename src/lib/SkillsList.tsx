@@ -1,30 +1,45 @@
-import { useState } from "react";
-
-const CategoryIcons = {
-  "Web Development": (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className="w-6 h-6 text-[var(--sec)] opacity-70"
-    >
-      <path d="M21 3C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H21ZM20 11H4V19H20V11ZM20 5H4V9H20V5ZM11 6V8H9V6H11ZM7 6V8H5V6H7Z"></path>
-    </svg>
-  ),
-  "Mobile Development": (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className="w-6 h-6 text-[var(--sec)] opacity-70"
-    >
-      <path d="M7 4V20H17V4H7ZM6 2H18C18.5523 2 19 2.44772 19 3V21C19 21.5523 18.5523 22 18 22H6C5.44772 22 5 21.5523 5 21V3C5 2.44772 5.44772 2 6 2ZM12 17C12.5523 17 13 17.4477 13 18C13 18.5523 12.5523 19 12 19C11.4477 19 11 18.5523 11 18C11 17.4477 11.4477 17 12 17Z"></path>
-    </svg>
-  ),
-};
+import { useState, useEffect } from "react";
 
 const SkillsList = () => {
   const [openItem, setOpenItem] = useState<string | null>(null);
+  const [categoryIcons, setCategoryIcons] = useState<{ [key: string]: string }>({});
+  const [loadingIcons, setLoadingIcons] = useState(true);
+  const [errorIcons, setErrorIcons] = useState<string | null>(null);
+
+  const remoteIconUrls: { [key: string]: string } = {
+    "Web Development": "https://cdn.jsdelivr.net/gh/offensive-vk/Icons@master/html5/html5-original.svg",
+    "Github Actions": "https://cdn.jsdelivr.net/gh/offensive-vk/Icons@master/githubactions/githubactions-original.svg",
+    "Containerization": "https://cdn.jsdelivr.net/gh/offensive-vk/Icons@master/docker/docker-original.svg",
+
+  };
+
+  useEffect(() => {
+    const fetchIcons = async () => {
+      setLoadingIcons(true);
+      setErrorIcons(null);
+      const fetchedIcons: { [key: string]: string } = {};
+      const fetchPromises = Object.entries(remoteIconUrls).map(async ([category, url]) => {
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch ${category} icon: ${response.statusText}`);
+          }
+          const svgText = await response.text();
+          fetchedIcons[category] = svgText;
+        } catch (error) {
+          console.error(error);
+          setErrorIcons(`Failed to load some icons.`);
+          fetchedIcons[category] = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-red-500 opacity-70"><path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z"></path></svg>`;
+        }
+      });
+
+      await Promise.all(fetchPromises);
+      setCategoryIcons(fetchedIcons);
+      setLoadingIcons(false);
+    };
+
+    fetchIcons();
+  }, []);
 
   const skills = {
     "Web Development": [
@@ -45,6 +60,14 @@ const SkillsList = () => {
     setOpenItem(openItem === item ? null : item);
   };
 
+  if (loadingIcons) {
+    return <div className="text-[var(--white)] text-center pt-3 md:pt-9">Loading icons...</div>;
+  }
+
+  if (errorIcons) {
+    return <div className="text-red-500 text-center pt-3 md:pt-9">{errorIcons}</div>;
+  }
+
   return (
     <div className="text-left pt-3 md:pt-9">
       <h3 className="text-[var(--white)] text-3xl md:text-4xl font-semibold md:mb-6">
@@ -58,7 +81,14 @@ const SkillsList = () => {
               className="md:w-[400px] w-full bg-[#1414149c] rounded-2xl text-left hover:bg-opacity-80 transition-all border border-[var(--white-icon-tr)] cursor-pointer overflow-hidden"
             >
               <div className="flex items-center gap-3 p-4">
-                {CategoryIcons[category]}
+                {/* Dynamically render the SVG string */}
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: categoryIcons[category]
+                      ? categoryIcons[category].replace(/<svg/, `<svg class="w-6 h-6 text-[var(--sec)] opacity-70"`)
+                      : '' // Fallback if icon not found
+                  }}
+                />
                 <div className="flex items-center gap-2 flex-grow justify-between">
                   <div className="min-w-0 max-w-[200px] md:max-w-none overflow-hidden">
                     <span className="block truncate text-[var(--white)] text-lg">
