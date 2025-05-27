@@ -48,9 +48,9 @@ The site will be available at `http://localhost:7777`.
 
 To create a production-ready build of your portfolio:
 
-```bash
-$ pnpm run build
-```
+    ```bash
+    $ pnpm run build
+    ```
 
 This command will generate the static assets in the `dist/` directory.
 
@@ -58,9 +58,9 @@ This command will generate the static assets in the `dist/` directory.
 
 You can preview the built site locally using:
 
-```bash
-$ pnpm run preview
-```
+    ```bash
+    $ pnpm run preview
+    ```
 
 This will also serve the site on `http://localhost:7777`.
 
@@ -70,22 +70,21 @@ This project includes a `Dockerfile` for easy containerization.
 
 ### Build the Docker Image
 
-```bash
-docker build -t dark-portfolio .
-```
+    ```bash
+    docker build -t dark-portfolio .
+    ```
 
 ### Run the Docker Container
 
-```bash
-docker run -p 7777:7777 dark-portfolio
-```
+    ```bash
+    docker run -p 7777:7777 dark-portfolio
+    ```
 
 Your portfolio will then be accessible via `http://localhost:7777` in your browser.
 
 ## Contributing
 
 Contributions are welcome\! Feel free to open issues or submit pull requests.
-
 
 ## License
 

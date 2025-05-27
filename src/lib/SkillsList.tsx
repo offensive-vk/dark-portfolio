@@ -10,7 +10,6 @@ const SkillsList = () => {
     "Web Development": "https://cdn.jsdelivr.net/gh/offensive-vk/Icons@master/html5/html5-original.svg",
     "Github Actions": "https://cdn.jsdelivr.net/gh/offensive-vk/Icons@master/githubactions/githubactions-original.svg",
     "Containerization": "https://cdn.jsdelivr.net/gh/offensive-vk/Icons@master/docker/docker-original.svg",
-
   };
 
   useEffect(() => {
