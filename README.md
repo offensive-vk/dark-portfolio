@@ -1,4 +1,4 @@
-# 🌒 Dark Portfolio
+# Dark Portfolio
 
 Welcome to the **Dark Portfolio**, a sleek and modern personal portfolio website built with **Astro**, **React**, and **Tailwind CSS**. This project showcases my work and skills in a stylish, dark-themed interface.
 
@@ -23,16 +23,16 @@ Make sure you have **Node.js (v24 or later)** and **pnpm** installed on your mac
 
 **Clone the repository:**
 
-    ```bash
-    git clone https://github.com/offensive-vk/dark-portfolio.git
-    cd dark-portfolio
-    ```
+```bash
+git clone https://github.com/offensive-vk/dark-portfolio.git
+cd dark-portfolio
+```
 
 **Install dependencies:**
 
-    ```bash
-    pnpm i
-    ```
+```bash
+pnpm i
+```
 
 ### Running Locally
 
@@ -48,9 +48,9 @@ The site will be available at `http://localhost:7777`.
 
 To create a production-ready build of your portfolio:
 
-    ```bash
-    $ pnpm run build
-    ```
+```bash
+$ pnpm run build
+```
 
 This command will generate the static assets in the `dist/` directory.
 
@@ -58,9 +58,9 @@ This command will generate the static assets in the `dist/` directory.
 
 You can preview the built site locally using:
 
-    ```bash
-    $ pnpm run preview
-    ```
+```bash
+pnpm run preview
+```
 
 This will also serve the site on `http://localhost:7777`.
 
@@ -70,15 +70,15 @@ This project includes a `Dockerfile` for easy containerization.
 
 ### Build the Docker Image
 
-    ```bash
-    docker build -t dark-portfolio .
-    ```
+```bash
+docker build -t dark-portfolio .
+```
 
 ### Run the Docker Container
 
-    ```bash
-    docker run -p 7777:7777 dark-portfolio
-    ```
+```bash
+docker run -p 7777:7777 dark-portfolio
+```
 
 Your portfolio will then be accessible via `http://localhost:7777` in your browser.
 
